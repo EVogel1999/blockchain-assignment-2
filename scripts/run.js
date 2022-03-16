@@ -7,8 +7,8 @@ const main = async () => {
 
   await testRegister(enrollmentContract);
   await testAddCourse(enrollmentContract, randomPerson);
-  
   enrollmentContract.connect(owner);
+  await testGetRoster(enrollmentContract);
 };
 
 async function testRegister(enrollmentContract) {
@@ -33,6 +33,17 @@ async function testAddCourse(enrollmentContract, notOwner) {
   await enrollmentContract.add(336, 0).then(_ => console.log('1. Contract owner could create a course that doesn\'t exist'));
   await enrollmentContract.add(336, 0).catch(_ => console.log('2. Caught contract owner trying to create a course that does exist'));
   await enrollmentContract.connect(notOwner).add(236, 0).catch(_ => console.log('3. Caught random person trying to create a course'));
+
+  console.log();
+}
+
+async function testGetRoster(enrollmentContract) {
+  console.log('Testing getRoster(courseNum):');
+  console.log('1. Got a list of registered students for 484 (1)');
+  await enrollmentContract.getRoster(484);
+  console.log('2. Got a list of registered students for 336 (0)');
+  await enrollmentContract.getRoster(336);
+  await enrollmentContract.getRoster(436).catch(_ => console.log('3. Caught trying to get the roster for a class that doesn\'t exist'));
 
   console.log();
 }

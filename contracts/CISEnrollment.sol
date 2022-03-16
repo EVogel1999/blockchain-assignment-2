@@ -61,6 +61,14 @@ contract CISEnrollment {
         catalogue[courseNum] = Course(courseNum, courseType, true, true);
     }
 
+    function getRoster(uint256 courseNum) public view CourseExists(courseNum) {
+        for (uint i = 0; i < registered.length; i++) {
+            if (registered[i].exists && registered[i].courseNum == courseNum) {
+                console.log(registered[i].id);
+            }
+        }
+    }
+
     // Private Functions
     function getNumberEnrolledStudents(uint256 course) private view returns (uint256) {
         uint256 total = 0;
