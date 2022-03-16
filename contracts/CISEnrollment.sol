@@ -47,6 +47,7 @@ contract CISEnrollment {
         Course memory c = catalogue[course];
         require(getNumberEnrolledStudents(course) < MAX_ENROLLED);
 
+        // If the student is a grad student and enrolling in a undergrad course
         if (studentType == EnrollmentType.GRADUATE && studentType != c.courseType) {
             require(students[msg.sender].exists && students[msg.sender].credits > 20);
         }
@@ -67,6 +68,30 @@ contract CISEnrollment {
                 console.log(registered[i].id);
             }
         }
+    }
+
+    function drop(uint256 course) public CheckStudentExists CourseExists(course) {
+        require(checkStudentIsEnrolled(course));
+        
+        // Find the Registered struct
+        Registered memory r;
+        uint index;
+        for (uint256 i = 0; i < registered.length; i++) {
+            if (registered[i].id == msg.sender && registered[i].courseNum == course) {
+                r = registered[i];
+                index = i;
+            }
+        }
+
+        // Check time requirement
+        require (block.timestamp - (60*30) < r.timestamp);
+
+        // Drop the course
+        students[msg.sender].credits -= r.credits;
+        for (uint256 i = index; i < registered.length - 1; i++) {
+            registered[i] = registered[i + 1];
+        }
+        delete registered[registered.length - 1];
     }
 
     // Private Functions

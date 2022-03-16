@@ -9,6 +9,7 @@ const main = async () => {
   await testAddCourse(enrollmentContract, randomPerson);
   enrollmentContract.connect(owner);
   await testGetRoster(enrollmentContract);
+  await testDrop(enrollmentContract);
 };
 
 async function testRegister(enrollmentContract) {
@@ -44,6 +45,15 @@ async function testGetRoster(enrollmentContract) {
   console.log('2. Got a list of registered students for 336 (0)');
   await enrollmentContract.getRoster(336);
   await enrollmentContract.getRoster(436).catch(_ => console.log('3. Caught trying to get the roster for a class that doesn\'t exist'));
+
+  console.log();
+}
+
+async function testDrop(enrollmentContract) {
+  console.log('Testing drop(course):');
+  await enrollmentContract.drop(484).then(_ => console.log('1. Successfully dropped a class they were enrolled in'));
+  await enrollmentContract.drop(336).catch(_ => console.log('2. Caught student trying to drop a class they aren\'t enrolled in'));
+  await enrollmentContract.drop(236).catch(_ => console.log('3. Caught student trying to drop a class that doesn\'t exist'));
 
   console.log();
 }
