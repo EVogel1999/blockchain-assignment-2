@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import "hardhat/console.sol";
+
 contract CISEnrollment {
     enum EnrollmentType { UNDERGRADUATE, GRADUATE }
 
@@ -56,7 +58,7 @@ contract CISEnrollment {
     // Private Functions
     function getNumberEnrolledStudents(uint256 course) private view returns (uint256) {
         uint256 total = 0;
-        for (uint i = 0; i < registered.length; i++) {
+        for (uint256 i = 0; i < registered.length; i++) {
             if (registered[i].exists && registered[i].courseNum == course) {
                 total++;
             }
@@ -65,13 +67,8 @@ contract CISEnrollment {
     }
 
     function enrollStudent(uint256 course, uint256 credits) private {
-        for (uint i = 0; i < registered.length; i++) {
-            if (!registered[i].exists) {
-                registered[i] = Registered(msg.sender, course, block.timestamp, credits, true);
-                students[msg.sender].credits += credits;
-                break;
-            }
-        }
+        registered.push(Registered(msg.sender, course, block.timestamp, credits, true));
+        students[msg.sender].credits += credits;
     }
 
     function checkStudentIsEnrolled(uint256 course) private view returns (bool) {
