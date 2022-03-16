@@ -1,11 +1,14 @@
 const main = async () => {
+  const [owner, randomPerson] = await hre.ethers.getSigners();
   const cisEnrollmentFactory = await hre.ethers.getContractFactory('CISEnrollment');
   const enrollmentContract = await cisEnrollmentFactory.deploy();
   await enrollmentContract.deployed();
   console.log('Contract deployed to:', enrollmentContract.address);
 
   await testRegister(enrollmentContract);
-  await testAddCourse(enrollmentContract);
+  await testAddCourse(enrollmentContract, randomPerson);
+  
+  enrollmentContract.connect(owner);
 };
 
 async function testRegister(enrollmentContract) {
@@ -25,10 +28,11 @@ async function testRegister(enrollmentContract) {
   console.log();
 }
 
-async function testAddCourse(enrollmentContract) {
+async function testAddCourse(enrollmentContract, notOwner) {
   console.log('Testing add(courseNum, courseType):');
   await enrollmentContract.add(336, 0).then(_ => console.log('1. Contract owner could create a course that doesn\'t exist'));
-  await enrollmentContract.add(336, 0).catch(_ => console.log('2. Contract owner could not create a course that does exist'));
+  await enrollmentContract.add(336, 0).catch(_ => console.log('2. Caught contract owner trying to create a course that does exist'));
+  await enrollmentContract.connect(notOwner).add(236, 0).catch(_ => console.log('3. Caught random person trying to create a course'));
 
   console.log();
 }
