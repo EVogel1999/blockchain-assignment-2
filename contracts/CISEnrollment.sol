@@ -28,13 +28,14 @@ contract CISEnrollment {
     }
     
     // Variables
-    address private owner = msg.sender;
+    address private owner;
     mapping (uint256 => Course) public catalogue;
     mapping (address => Student) public students;
     Registered[] private registered;
     uint private MAX_ENROLLED = 30;
 
     constructor() {
+        owner = msg.sender;
         catalogue[670] = Course(670, EnrollmentType.GRADUATE, true, true);
         catalogue[617] = Course(617, EnrollmentType.GRADUATE, true, true);
         catalogue[484] = Course(484, EnrollmentType.UNDERGRADUATE, true, true);
@@ -53,6 +54,11 @@ contract CISEnrollment {
         require(!checkStudentIsEnrolled(course));
 
         enrollStudent(course, credits);
+    }
+
+    function add(uint256 courseNum, EnrollmentType courseType) public CourseDoesntExist(courseNum) {
+        require(msg.sender == owner);
+        catalogue[courseNum] = Course(courseNum, courseType, true, true);
     }
 
     // Private Functions
