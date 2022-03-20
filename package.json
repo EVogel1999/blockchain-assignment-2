@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat run .\\scripts\\run.js"
+    "test": "npx hardhat run .\\scripts\\a2p2.js"
   },
   "keywords": [],
   "author": "",
